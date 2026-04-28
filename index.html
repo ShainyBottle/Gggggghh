@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SStwendRT Shop</title>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root { --bg: #0a0a0a; --text: #f0f0f0; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      text-align: center;
+      padding: 40px 20px;
+    }
+    h1 { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; }
+    .subtitle { font-size: 1.3rem; opacity: 0.7; margin-bottom: 50px; }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 12px;
+      width: 340px;
+      padding: 40px 30px;
+      transition: all 0.3s;
+    }
+    .card:hover { transform: translateY(-10px); border-color: #fff; box-shadow: 0 0 30px rgba(255,255,255,0.1); }
+
+    .price { font-size: 2.8rem; font-weight: 700; margin: 20px 0; }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      margin: 10px 0;
+      background: #1a1a1a;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .yoomoney-btn { border: 3px solid #a020f0; }
+    .yoomoney-btn:hover { background: #2a2a2a; border-color: #c026f0; transform: scale(1.03); }
+
+    .roblox-btn { border: 3px solid #00b0ff; }
+    .roblox-btn:hover { background: #2a2a2a; border-color: #00d0ff; transform: scale(1.03); }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: #111;
+      border: 2px solid #fff;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 460px;
+      padding: 35px;
+      color: #fff;
+    }
+    .modal input {
+      width: 100%;
+      padding: 14px;
+      margin: 15px 0;
+      background: #222;
+      border: 1px solid #555;
+      border-radius: 8px;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SStwendRT Shop</h1>
+    <p class="subtitle">Products • Whitelist & VIP</p>
+  </header>
+
+  <div class="products">
+
+    <!-- WHITELIST -->
+    <div class="card">
+      <h2>WHITELIST</h2>
+      <div class="price">100 ₽</div>
+      <p>Priority access • Exclusive role • More Scripts</p>
+      
+      <button onclick="showUsernameModal('whitelist')" class="yoomoney-btn">BUY WITH YOOMONEY</button>
+      <button onclick="window.open('https://www.roblox.com/game-pass/1567915760/Whitelist', '_blank')" class="roblox-btn">BUY ON ROBLOX</button>
+    </div>
+
+    <!-- VIP -->
+    <div class="card">
+      <h2>VIP</h2>
+      <div class="price">400 ₽</div>
+      <p>Full Access • All Benefits • Fast Support</p>
+      
+      <button onclick="showUsernameModal('vip')" class="yoomoney-btn">BUY WITH YOOMONEY</button>
+      <button onclick="window.open('https://www.roblox.com/game-pass/1567771885/VIP', '_blank')" class="roblox-btn">BUY ON ROBLOX</button>
+    </div>
+
+  </div>
+
+  <div class="socials" style="margin-top:80px;">
+    <a href="https://discord.gg/rzsAgKMFx5" target="_blank">Discord</a>
+    <a href="https://youtube.com/@sstwendrt?si=-psQitPr6ykBpaA-" target="_blank">YouTube</a>
+  </div>
+
+  <footer style="margin-top:100px; opacity:0.5;">© 2026 SStwendRT Store</footer>
+
+  <!-- Modal -->
+  <div id="usernameModal" class="modal">
+    <div class="modal-content">
+      <h3>Complete Your Purchase</h3>
+      <p style="margin:20px 0 10px;">Enter your Roblox Username:</p>
+      <input type="text" id="robloxUsername" placeholder="Your Roblox Username">
+
+      <p style="margin:25px 0 20px; font-size:0.95rem;">
+        After payment write in Discord:<br>
+        <strong>"buyed @SStwendRT"</strong>
+      </p>
+
+      <button onclick="submitAndPay()" class="yoomoney-btn">SUBMIT USERNAME & PAY</button>
+      <button onclick="closeModal()" style="background:#555; width:100%; padding:14px; border:none; border-radius:8px; color:#fff;">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    emailjs.init("cSMw2Ndg5y3jLT70K");
+
+    let currentProduct = "";
+
+    function showUsernameModal(product) {
+      currentProduct = product;
+      document.getElementById("usernameModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("usernameModal").style.display = "none";
+    }
+
+    function submitAndPay() {
+      const username = document.getElementById("robloxUsername").value.trim();
+      if (!username) {
+        alert("Please enter your Roblox Username");
+        return;
+      }
+
+      const isWhitelist = currentProduct === "whitelist";
+      const productName = isWhitelist ? "WHITELIST" : "VIP";
+      const price = isWhitelist ? "100" : "400";
+
+      // Отправка письма на почту
+      emailjs.send("service_8mvwyjq", "template_c0xu1cs", {
+        robux_amount: productName,
+        price: price,
+        username: username,
+        place_id: "-",
+        payment_date: new Date().toLocaleString("ru-RU")
+      });
+
+      closeModal();
+
+      // Открываем твою оригинальную оплату через iframe (billNumber)
+      if (isWhitelist) {
+        document.getElementById("paymentContainer").innerHTML = 
+          `<iframe src="https://yoomoney.ru/quickpay/fundraise/button?billNumber=1HDO6KKKD3F.260428" width="330" height="60" frameborder="0" allowtransparency="true" scrolling="no"></iframe>`;
+      } else {
+        document.getElementById("paymentContainer").innerHTML = 
+          `<iframe src="https://yoomoney.ru/quickpay/fundraise/button?billNumber=1HDO6DBAA1S.260428" width="330" height="60" frameborder="0" allowtransparency="true" scrolling="no"></iframe>`;
+      }
+
+      alert(`✅ Username: ${username} saved and sent to email.\n\nNow complete the payment.\n\nAfter payment write in Discord: "buyed @SStwendRT"`);
+    }
+  </script>
+
+  <!-- Контейнер для динамической оплаты ЮMoney -->
+  <div id="paymentContainer" style="margin-top:30px;"></div>
+
+</body>
+</html>
